@@ -1,0 +1,7 @@
+logs/
+*.jpg
+/target/
+*.iml
+.idea/
+/no_use
+*.xlsx
