@@ -4,7 +4,6 @@ import time
 
 
 def getdata():
-    url = "http://www.baidu.com"
     url2 ="https://bittrex.com/api/v1.1/public/getmarkets"
     data = urllib.request.urlopen(url2).read()
     z_data = data.decode('UTF-8')
