@@ -1,7 +1,7 @@
 import datetime
-import urllib.request
 import json
 import time
+import urllib.request
 
 
 def queryBittrexData():
@@ -27,6 +27,6 @@ def getYesterday():
     return time.mktime(time.strptime(yesterday.strftime('%Y-%m-%d'), '%Y-%m-%d'))
 
 
-queryBittrexData()
+# queryBittrexData()
 # getTimeOClockOfToday()
 # getTimeOClockOfToday()

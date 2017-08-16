@@ -1,16 +1,16 @@
 # coding=utf-8
 import re
-
 import time
 import urllib.request
+from urllib.request import Request, urlopen
 
 from query.IcoData import IcoData
 from query.enum.TypeEnum import TypeEnum
-from urllib.request import Request, urlopen
-
+from query.fileProcess import initoriginset, setOriginSet
 
 resultSet = set([])
 originSet = set([])
+
 
 def gethtml():
     req = Request(
@@ -18,6 +18,7 @@ def gethtml():
         headers={'User-Agent': 'Mozilla/5.0'})
     webpage = urlopen(req).read()
     return webpage.decode('utf-8')
+
 
 def getHtml():
     responseCode = 0
@@ -35,14 +36,13 @@ def getHtml():
         response = urllib.request.urlopen(request)
 
         data = response.read()
-        print( data)
+        print(data)
         # 设置解码方式
         data = data.decode('utf-8')
         if (response.getcode() == 200):
             return data
 
     return None
-
 
 
 def parase(data):
@@ -55,7 +55,7 @@ def parase(data):
         icodata = IcoData(TypeEnum.upcoming, data[0].strip(), data[2].strip(), None)
     elif (data[1].find("text") > 0):
         icodata = IcoData(TypeEnum.onGoing, data[0].strip(), paraseText(data[1]), data[2].strip())
-    print (icodata)
+    print(icodata)
 
 
 def paraseText(text):
@@ -67,7 +67,7 @@ def paraseText(text):
 
 
 def readFile():
-    file = open("icoText.txt", 'r',encoding='latin1')
+    file = open("icoText.txt", 'r', encoding='latin1')
     text = file.read()
     handleoriginText(text)
     return list(resultSet)
@@ -79,6 +79,9 @@ def handleoriginText(text):
     #     re.S)
     global resultSet
     global originSet
+    filePath = "conf/record.json"
+    key = "tokenMarketData"
+    initoriginset(filePath, originSet, key)
     pattern = re.compile(
         '<td.*?class="col-asset-name.*?>.*?<a.? href=.*?>(.*?)</a>.*?</td>',
         re.S)
@@ -86,27 +89,58 @@ def handleoriginText(text):
     resultSet.clear()
     for item in items:
         itemStr = item.strip()
-        if(itemStr not in originSet):
+        if (itemStr not in originSet):
             originSet.add(itemStr)
             resultSet.add(itemStr)
+    setOriginSet(filePath, originSet, key)
     return resultSet
-
 
 
 def getFromTokenMarket():
     data = gethtml()
-    if(data != None):
+    if (data != None):
         handleoriginText(data)
+        print(','.join(str(x) for x in resultSet))
         return list(resultSet)
     else:
         raise Exception("从tokenMarket获取数据出错")
 
 
 def dateParse():
-    date ="10. Aug 2017"
-    res =time.strptime(date,"%d. %b %Y")
-    print (time.mktime(res))
+    date = "10. Aug 2017"
+    res = time.strptime(date, "%d. %b %Y")
+    print(time.mktime(res))
+
 
 # getFromTokenMarket()
 # dateParse()
-gethtml()
+'''
+def initoriginset(filePath):
+
+    if os.path.isfile(filePath):
+        global originSet
+        fo = open(filePath, "r+", encoding='utf-8')
+        allFile = fo.read()
+        fo.close()
+        jsonFile = json.loads(allFile)
+        if "tokenMarketData" in jsonFile.keys():
+            twitterData = jsonFile["tokenMarketData"]
+            originSet.update(twitterData.split(','))
+        return jsonFile
+
+
+def setOriginSet(filePath):
+
+    global originSet
+    input = ",".join(originSet)
+    jsonFile = initoriginset(filePath)
+    jsonFile["tokenMarketData"] =input
+    res = json.dumps(jsonFile)
+    fo = open(filePath, "w+", encoding='utf-8')
+    fo.write(res)
+    fo.flush()
+    fo.close()
+'''
+# gethtml()
+
+readFile()
