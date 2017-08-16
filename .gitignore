@@ -7,4 +7,4 @@ logs/
 /no_use
 *.xlsx
 __pycache__
-*.config
+conf.config
