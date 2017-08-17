@@ -34,7 +34,7 @@ def getInfoFromTwitter():
     if sinceId ==None:
         sinceId =-1
     recordMaxId=None
-    while maxId==None or (sinceId<maxId and pageCount<10):
+    while maxId==None or (sinceId<maxId and pageCount<10000):
 
         reslist = api.search(q=query, count=100, result_type="recent", since_id=sinceId, max_id=maxId,
                              include_entities=True)

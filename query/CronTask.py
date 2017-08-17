@@ -9,9 +9,7 @@ from query.queryTwitter import getInfoFromTwitter
 
 
 def job():
-    print("start")
     bittrexList =queryBittrexData()
-    print("end")
     bittrexStrPre = 'bittrex昨天新上的币种：'
     if not bittrexList:
         bittrexStrAft ='无'
@@ -56,5 +54,5 @@ def event_listener(event):
 
 scheduler = BlockingScheduler()
 scheduler.add_listener(event_listener,EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
-scheduler.add_job(job, 'cron', hour=4, minute=0)
+scheduler.add_job(job, 'cron', hour=8, minute=18)
 scheduler.start()
